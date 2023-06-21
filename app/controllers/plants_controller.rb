@@ -1,4 +1,5 @@
 class PlantsController < ApplicationController
+  before_action :set_plant, only: [:show, :update, :destroy]
 
   # GET /plants
   def index
@@ -16,6 +17,28 @@ class PlantsController < ApplicationController
   def create
     plant = Plant.create(plant_params)
     render json: plant, status: :created
+  end
+
+  # DELETE /plants/:id
+  def destroy
+    @plant.destroy
+    head :no_content
+  end
+
+  #PATCH
+  def update
+    if @plant.update(plant_params)
+      render json: @plant
+    else
+      render json: @plant.errors, status: :unprocessable_entity
+    end
+  end
+  
+  def set_plant
+    @plant = Plant.find_by(id: params[:id])
+    unless @plant
+      render json: { error: 'Plant not found' }, status: :not_found
+    end
   end
 
   private
